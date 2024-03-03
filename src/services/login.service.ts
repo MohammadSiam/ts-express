@@ -2,12 +2,11 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { getRepository } from "typeorm";
 import { Login } from "../models/login.model";
-import { Registration } from "../models/registration.model";
 
 export const loginUser = async (email: string, password: string) => {
   try {
-    const registrationRepository = getRepository(Registration);
-    const user = await registrationRepository.findOne({ where: { email } });
+    const loginRepository = getRepository(Login);
+    const user = await loginRepository.findOne({ where: { email } });
 
     if (!user) {
       return null; // User not found
