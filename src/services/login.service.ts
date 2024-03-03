@@ -30,10 +30,14 @@ export const loginUser = async (email: string, password: string) => {
 
 export const createLogin = async (email: string, password: string) => {
   try {
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Save the email and hashed password to the login table
     const loginRepository = getRepository(Login);
     const newLogin = loginRepository.create({
       email,
-      password,
+      password: hashedPassword,
     });
     await loginRepository.save(newLogin);
   } catch (error) {
