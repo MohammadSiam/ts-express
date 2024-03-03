@@ -2,6 +2,8 @@ import { json, urlencoded } from "body-parser";
 import express, { Application } from "express";
 import { createConnection } from "typeorm";
 import connectionOptions from "./db/config";
+import loginRoutes from "./routes/login.route";
+import registrationRoutes from "./routes/registration.routes";
 import todoRoutes from "./routes/todos.route";
 
 import dotenv from "dotenv";
@@ -16,6 +18,8 @@ app.use(json());
 app.use(urlencoded({ extended: true }));
 
 app.use("/todos", todoRoutes);
+app.use("/api", registrationRoutes);
+app.use("/api", loginRoutes);
 
 app.use(
   (

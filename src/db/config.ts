@@ -1,4 +1,5 @@
 import { ConnectionOptions } from "typeorm";
+import { Registration } from "../models/registration.model";
 import { Todos } from "../models/todos.model";
 
 const connectionOptions: ConnectionOptions = {
@@ -8,7 +9,7 @@ const connectionOptions: ConnectionOptions = {
   username: "root",
   password: "",
   database: "login_system",
-  entities: [Todos],
+  entities: [Todos, Registration],
   synchronize: true,
   logging: false,
 };
