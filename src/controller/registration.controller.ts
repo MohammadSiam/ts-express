@@ -4,14 +4,8 @@ import { createRegistration } from "../services/registration.service";
 
 export const registerUser = async (req: Request, res: Response) => {
   try {
-    const { username, email, phoneNumber, department, password } = req.body;
-    await createRegistration(
-      username,
-      email,
-      phoneNumber,
-      department,
-      password
-    );
+    const { username, email, phone, department, password } = req.body;
+    await createRegistration(username, email, phone, department, password);
     await createLogin(email, password);
     return res.status(201).json({ message: "User registered successfully" });
   } catch (error) {

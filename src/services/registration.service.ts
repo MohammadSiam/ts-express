@@ -5,7 +5,7 @@ import { Registration } from "../models/registration.model";
 export const createRegistration = async (
   username: string,
   email: string,
-  phoneNumber: string,
+  phone: string,
   department: string,
   password: string
 ) => {
@@ -15,7 +15,7 @@ export const createRegistration = async (
     const newRegistration = registrationRepository.create({
       username,
       email,
-      phoneNumber,
+      phone,
       department,
       password: hashedPassword,
     });

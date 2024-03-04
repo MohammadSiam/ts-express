@@ -12,7 +12,7 @@ export class Registration {
   email!: string;
 
   @Column({ type: "varchar", nullable: false })
-  phoneNumber!: string;
+  phone!: string;
 
   @Column({ type: "varchar", nullable: false })
   department!: string;

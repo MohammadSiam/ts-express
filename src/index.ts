@@ -1,7 +1,9 @@
 import { json, urlencoded } from "body-parser";
+import cors from "cors";
 import express, { Application } from "express";
 import { createConnection } from "typeorm";
 import connectionOptions from "./db/config";
+import bookingRoutes from "./routes/bookMeeting.route";
 import loginRoutes from "./routes/login.route";
 import registrationRoutes from "./routes/registration.routes";
 import todoRoutes from "./routes/todos.route";
@@ -14,12 +16,14 @@ const app: Application = express();
 const port = process.env.PORT || 8000;
 
 app.use(json());
+app.use(cors());
 
 app.use(urlencoded({ extended: true }));
 
 app.use("/todos", todoRoutes);
 app.use("/api", registrationRoutes);
 app.use("/api", loginRoutes);
+app.use("/book", bookingRoutes);
 
 app.use(
   (

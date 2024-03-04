@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import jwt, { Secret } from "jsonwebtoken";
 import { getRepository } from "typeorm";
 import { Login } from "../models/login.model";
 
@@ -15,13 +15,17 @@ export const loginUser = async (email: string, password: string) => {
     if (!passwordMatch) {
       return null; // Passwords don't match
     }
-    const jwtSecret = process.env.JWT_SECRET || "default_secret";
+    const jwtSecret: Secret = process.env.JWT_SECRET as Secret;
 
     // Generate JWT token
-    const token = jwt.sign({ userId: user.id }, jwtSecret, {
-      expiresIn: "1h",
-    });
-    return token;
+    const token = jwt.sign(
+      { userId: user.id, userEmail: user.email },
+      jwtSecret,
+      {
+        expiresIn: "1h",
+      }
+    );
+    return { token, userId: user.id, userEmail: user.email };
   } catch (error) {
     throw error;
   }
