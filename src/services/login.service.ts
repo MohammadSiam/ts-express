@@ -25,7 +25,7 @@ export const loginUser = async (email: string, password: string) => {
         expiresIn: "1h",
       }
     );
-    return { token, userId: user.id, userEmail: user.email };
+    return token;
   } catch (error) {
     throw error;
   }

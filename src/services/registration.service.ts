@@ -24,3 +24,10 @@ export const createRegistration = async (
     throw error;
   }
 };
+export const getRegistrationUserById = async (id: number) => {
+  const regRepository = getRepository(Registration);
+  // console.log(id);
+  const reg = await regRepository.findOneBy({ id: id });
+  console.log(reg);
+  return reg;
+};
