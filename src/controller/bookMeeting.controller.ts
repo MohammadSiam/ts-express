@@ -1,5 +1,6 @@
 import { RequestHandler } from "express";
 import {
+  approveMeeting,
   bookMeeting,
   getMeetingByIdSerivce,
   getMeetingsAll,
@@ -21,7 +22,7 @@ export const bookMeetings: RequestHandler = async (req, res, next) => {
 export const getAllMeetings: RequestHandler = async (req, res, next) => {
   try {
     const allMeetings = await getMeetingsAll();
-    console.log(allMeetings);
+    // console.log(allMeetings);
     const meetings = await Promise.all(
       allMeetings.map(async (meeting: any) => {
         const user = await getRegistrationUserById(meeting.userId);
@@ -32,7 +33,7 @@ export const getAllMeetings: RequestHandler = async (req, res, next) => {
         return { meeting, username: user.username };
       })
     );
-    return res.status(200).json(meetings);
+    return res.status(200).json({ data: meetings });
   } catch (error) {
     next(error);
   }
@@ -45,13 +46,11 @@ export const getMeetingById: RequestHandler = async (req, res, next) => {
     const user = await getRegistrationUserById(parseInt(id));
     // console.log(user);
 
-    return res
-      .status(200)
-      .json({
-        message: "Meeting fetched successfully",
-        data: getMeeting,
-        user,
-      });
+    return res.status(200).json({
+      message: "Meeting fetched successfully",
+      data: getMeeting,
+      user,
+    });
   } catch (error) {
     next(error);
   }
@@ -66,5 +65,27 @@ export const getMeetingUserId: RequestHandler = async (req, res, next) => {
       .json({ message: "Meeting fetched successfully", data: getMeetingUser });
   } catch (error) {
     next(error);
+  }
+};
+
+export const approveMeetings: RequestHandler = async (req, res, next) => {
+  const meetingId = parseInt(req.params.id);
+  try {
+    await approveMeeting(meetingId, "approved");
+    res.send("Meeting approved successfully");
+  } catch (error) {
+    console.error("Error approving meeting:", error);
+    res.status(500).send("Error approving meeting");
+  }
+};
+
+export const rejectMeeting: RequestHandler = async (req, res, next) => {
+  const meetingId = parseInt(req.params.id);
+  try {
+    await approveMeeting(meetingId, "rejected"); // Mark meeting as rejected
+    res.send("Meeting rejected successfully");
+  } catch (error) {
+    console.error("Error rejecting meeting:", error);
+    res.status(500).send("Error rejecting meeting");
   }
 };

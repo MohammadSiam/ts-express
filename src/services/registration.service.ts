@@ -10,8 +10,27 @@ export const createRegistration = async (
   password: string
 ) => {
   try {
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // Check if username or email already exists
     const registrationRepository = getRepository(Registration);
+    const existingUsername = await registrationRepository.findOne({
+      where: { username },
+    });
+    const existingEmail = await registrationRepository.findOne({
+      where: { email },
+    });
+
+    if (existingUsername) {
+      throw new Error("Username is already in use");
+    }
+
+    if (existingEmail) {
+      throw new Error("Email is already in use");
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create and save the new registration
     const newRegistration = registrationRepository.create({
       username,
       email,
@@ -24,10 +43,19 @@ export const createRegistration = async (
     throw error;
   }
 };
+
 export const getRegistrationUserById = async (id: number) => {
   const regRepository = getRepository(Registration);
   // console.log(id);
-  const reg = await regRepository.findOneBy({ id: id });
+  const reg = await regRepository.findOneBy({ registrationId: id });
   console.log(reg);
   return reg;
+};
+
+export const getNameRegistrationUser = async (id: number) => {
+  const regRepository = getRepository(Registration);
+  // console.log(id);
+  const reg: any = await regRepository.findOneBy({ registrationId: id });
+  // console.log(reg.username);
+  return reg.username;
 };

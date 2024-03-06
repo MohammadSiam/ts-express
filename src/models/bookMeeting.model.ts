@@ -3,7 +3,7 @@ import { Column, Entity, PrimaryGeneratedColumn, Timestamp } from "typeorm";
 @Entity("bookMeeting")
 export class BookMeeting {
   @PrimaryGeneratedColumn()
-  id!: number;
+  meetingId!: number;
 
   @Column({ type: "time", nullable: false })
   startTime!: Timestamp;
@@ -28,4 +28,7 @@ export class BookMeeting {
 
   @Column()
   userId!: number;
+
+  @Column({ default: "pending" }) // default status is pending
+  status!: string;
 }

@@ -1,9 +1,11 @@
 import express from "express";
 import {
+  approveMeetings,
   bookMeetings,
   getAllMeetings,
   getMeetingById,
   getMeetingUserId,
+  rejectMeeting,
 } from "../controller/bookMeeting.controller";
 
 const router = express.Router();
@@ -13,5 +15,7 @@ router.post("/booking", bookMeetings);
 router.get("/getAllMeetings", getAllMeetings);
 router.get("/getMeetingById/:id", getMeetingById);
 router.get("/getMeetingByUserId/:id", getMeetingUserId);
+router.put("/:id/approve", approveMeetings);
+router.put("/:id/reject", rejectMeeting);
 
 export default router;

@@ -14,9 +14,11 @@ export const getMeetingsAll = async () => {
   return allMeetings;
 };
 
-export const getMeetingByIdSerivce = async (id: number): Promise<any> => {
+export const getMeetingByIdSerivce = async (
+  meetingId: number
+): Promise<any> => {
   const meetingRepository = getRepository(BookMeeting);
-  const meeting = await meetingRepository.findBy({ id });
+  const meeting = await meetingRepository.findOneBy({ meetingId });
   return meeting;
 };
 
@@ -28,4 +30,14 @@ export const getMeetingsForUser = async (
     where: { userId: userId },
   });
   return meetings;
+};
+
+export const approveMeeting = async (meetingId: number, status: string) => {
+  const meetingRepository = getRepository(BookMeeting);
+  const meeting: any = await meetingRepository.findOneBy({ meetingId });
+  if (!meeting) {
+    throw new Error("Meeting Not Found");
+  }
+  meeting.status = status;
+  await meetingRepository.save(meeting);
 };
