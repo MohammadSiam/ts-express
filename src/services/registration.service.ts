@@ -48,7 +48,7 @@ export const getRegistrationUserById = async (id: number) => {
   const regRepository = getRepository(Registration);
   // console.log(id);
   const reg = await regRepository.findOneBy({ registrationId: id });
-  console.log(reg);
+  // console.log(reg);
   return reg;
 };
 

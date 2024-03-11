@@ -44,6 +44,6 @@ createConnection(connectionOptions)
     console.error("Error connecting to database:", error);
   });
 
-app.listen(3000, () => {
+app.listen(port, () => {
   console.log(`Server started on port 3000`);
 });

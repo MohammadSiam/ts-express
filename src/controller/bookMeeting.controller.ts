@@ -2,6 +2,7 @@ import { RequestHandler } from "express";
 import {
   approveMeeting,
   bookMeeting,
+  getAllMeetingsByDateService,
   getMeetingByIdSerivce,
   getMeetingsAll,
   getMeetingsForUser,
@@ -36,6 +37,25 @@ export const getAllMeetings: RequestHandler = async (req, res, next) => {
     return res.status(200).json({ data: meetings });
   } catch (error) {
     next(error);
+  }
+};
+
+export const getAllMeetingsByDate: RequestHandler = async (
+  req,
+  res,
+  next
+): Promise<void> => {
+  try {
+    const { date } = req.params;
+
+    // Call the service function to get meetings by date
+    const meetings = await getAllMeetingsByDateService(date);
+
+    // Send the meetings as a response
+    res.json(meetings);
+  } catch (error) {
+    console.error("Error fetching meetings:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
