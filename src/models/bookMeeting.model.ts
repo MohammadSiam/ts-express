@@ -14,7 +14,7 @@ export class BookMeeting {
   @Column({ type: "date", nullable: false })
   date!: Date;
 
-  @Column({ type: "varchar", nullable: false })
+  @Column({ type: "integer", nullable: false })
   numberOfAttendees!: number;
 
   @Column({ type: "varchar", nullable: false })

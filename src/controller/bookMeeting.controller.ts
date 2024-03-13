@@ -105,6 +105,7 @@ export const getMeetingUserId: RequestHandler = async (req, res, next) => {
 
 export const approveMeetings: RequestHandler = async (req, res, next) => {
   const meetingId = parseInt(req.params.id);
+  // req.bode.status
   try {
     await approveMeeting(meetingId, "approved");
     res.send("Meeting approved successfully");
