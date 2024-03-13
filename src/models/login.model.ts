@@ -10,4 +10,7 @@ export class Login {
 
   @Column({ type: "varchar", nullable: false })
   password!: string;
+
+  @Column({ type: "varchar", nullable: false, default: "user" })
+  role!: string;
 }

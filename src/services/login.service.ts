@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt, { Secret } from "jsonwebtoken";
-import { getRepository } from "typeorm";
+import { getRepository, SelectQueryBuilder } from "typeorm";
 import { Login } from "../models/login.model";
 
 export const loginUser = async (email: string, password: string) => {
@@ -17,9 +17,22 @@ export const loginUser = async (email: string, password: string) => {
     }
     const jwtSecret: Secret = process.env.JWT_SECRET as Secret;
 
-    // Generate JWT token
+    // Check if user has admin role
+    if (user.role === "admin") {
+      // Generate JWT token with admin privileges
+      const adminToken = jwt.sign(
+        { userId: user.id, userEmail: user.email, role: "admin" },
+        jwtSecret,
+        {
+          expiresIn: "1h",
+        }
+      );
+      return adminToken;
+    }
+
+    // Generate JWT token for regular user
     const token = jwt.sign(
-      { userId: user.id, userEmail: user.email },
+      { userId: user.id, userEmail: user.email, role: "user" },
       jwtSecret,
       {
         expiresIn: "1h",
@@ -30,7 +43,7 @@ export const loginUser = async (email: string, password: string) => {
     throw error;
   }
 };
-
+//parallal puted the information from registration forms
 export const createLogin = async (email: string, password: string) => {
   try {
     // Hash the password
@@ -43,6 +56,21 @@ export const createLogin = async (email: string, password: string) => {
       password: hashedPassword,
     });
     await loginRepository.save(newLogin);
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const adminUserService = async (email: string) => {
+  try {
+    const loginRepository = getRepository(Login);
+    const queryBuilder: SelectQueryBuilder<Login> =
+      loginRepository.createQueryBuilder("login");
+    const user = await queryBuilder
+      .where("login.email=:email", { email })
+      .andWhere("login.role=:role", { role: "admin" })
+      .getMany();
+    return user;
   } catch (error) {
     throw error;
   }

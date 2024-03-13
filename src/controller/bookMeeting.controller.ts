@@ -3,6 +3,7 @@ import {
   approveMeeting,
   bookMeeting,
   getAllMeetingsByDateService,
+  getAllMeetingsByRoomNumberService,
   getMeetingByIdSerivce,
   getMeetingsAll,
   getMeetingsForUser,
@@ -46,13 +47,27 @@ export const getAllMeetingsByDate: RequestHandler = async (
   next
 ): Promise<void> => {
   try {
-    const { date } = req.params;
-
+    const { date, roomNumber } = req.params;
     // Call the service function to get meetings by date
-    const meetings = await getAllMeetingsByDateService(date);
+    const meetings = await getAllMeetingsByDateService(date, roomNumber);
 
     // Send the meetings as a response
     res.json(meetings);
+  } catch (error) {
+    console.error("Error fetching meetings:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const getAllMeetingsByRoomNumber: RequestHandler = async (
+  req,
+  res,
+  next
+) => {
+  try {
+    const { num } = req.params;
+    const roomNumbers = await getAllMeetingsByRoomNumberService(num);
+    res.json(roomNumbers);
   } catch (error) {
     console.error("Error fetching meetings:", error);
     res.status(500).json({ error: "Internal server error" });
@@ -90,6 +105,7 @@ export const getMeetingUserId: RequestHandler = async (req, res, next) => {
 
 export const approveMeetings: RequestHandler = async (req, res, next) => {
   const meetingId = parseInt(req.params.id);
+  // req.bode.status
   try {
     await approveMeeting(meetingId, "approved");
     res.send("Meeting approved successfully");
