@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt, { Secret } from "jsonwebtoken";
-import { getRepository, SelectQueryBuilder } from "typeorm";
+import { getRepository } from "typeorm";
 import { Login } from "../models/login.model";
 
 export const loginUser = async (email: string, password: string) => {
@@ -64,13 +64,25 @@ export const createLogin = async (email: string, password: string) => {
 export const adminUserService = async (email: string) => {
   try {
     const loginRepository = getRepository(Login);
-    const queryBuilder: SelectQueryBuilder<Login> =
-      loginRepository.createQueryBuilder("login");
-    const user = await queryBuilder
-      .where("login.email=:email", { email })
-      .andWhere("login.role=:role", { role: "admin" })
-      .getMany();
-    return user;
+    // const queryBuilder: SelectQueryBuilder<Login> =
+    //   loginRepository.createQueryBuilder("login");
+    // const user: any = await queryBuilder
+    //   .where("login.email=:email", { email })
+    //   .andWhere("login.role=:role", { role: "admin" })
+    //   .getMany();
+    const user = await loginRepository.findOne({
+      where: { email, role: "admin" },
+    });
+
+    if (!user) {
+      throw new Error("Admin not Found");
+    }
+    const token = jwt.sign(
+      { userId: user.id, userEmail: user.email, role: user.role },
+      process.env.JWT_SECRET as Secret,
+      { expiresIn: "1h" }
+    );
+    return token;
   } catch (error) {
     throw error;
   }

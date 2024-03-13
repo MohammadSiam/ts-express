@@ -1,18 +1,10 @@
 import { RequestHandler } from "express";
-import {
-  approveMeeting,
-  bookMeeting,
-  getAllMeetingsByDateService,
-  getAllMeetingsByRoomNumberService,
-  getMeetingByIdSerivce,
-  getMeetingsAll,
-  getMeetingsForUser,
-} from "../services/bookMeeting.service";
+import * as service from "../services/bookMeeting.service";
 import { getRegistrationUserById } from "../services/registration.service";
 
 export const bookMeetings: RequestHandler = async (req, res, next) => {
   try {
-    const savedMeeting = await bookMeeting(req.body);
+    const savedMeeting = await service.bookMeeting(req.body);
     return res
       .status(200)
       .json({ message: "Meeting created successfully", data: savedMeeting });
@@ -23,7 +15,7 @@ export const bookMeetings: RequestHandler = async (req, res, next) => {
 
 export const getAllMeetings: RequestHandler = async (req, res, next) => {
   try {
-    const allMeetings = await getMeetingsAll();
+    const allMeetings = await service.getMeetingsAll();
     // console.log(allMeetings);
     const meetings = await Promise.all(
       allMeetings.map(async (meeting: any) => {
@@ -32,7 +24,7 @@ export const getAllMeetings: RequestHandler = async (req, res, next) => {
         if (!user) {
           return { meeting, user: null };
         }
-        return { meeting, username: user.username };
+        return { meeting, username: user.username, email: user.email };
       })
     );
     return res.status(200).json({ data: meetings });
@@ -49,7 +41,10 @@ export const getAllMeetingsByDate: RequestHandler = async (
   try {
     const { date, roomNumber } = req.params;
     // Call the service function to get meetings by date
-    const meetings = await getAllMeetingsByDateService(date, roomNumber);
+    const meetings = await service.getAllMeetingsByDateService(
+      date,
+      roomNumber
+    );
 
     // Send the meetings as a response
     res.json(meetings);
@@ -66,7 +61,7 @@ export const getAllMeetingsByRoomNumber: RequestHandler = async (
 ) => {
   try {
     const { num } = req.params;
-    const roomNumbers = await getAllMeetingsByRoomNumberService(num);
+    const roomNumbers = await service.getAllMeetingsByRoomNumberService(num);
     res.json(roomNumbers);
   } catch (error) {
     console.error("Error fetching meetings:", error);
@@ -77,7 +72,7 @@ export const getAllMeetingsByRoomNumber: RequestHandler = async (
 export const getMeetingById: RequestHandler = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const getMeeting = await getMeetingByIdSerivce(parseInt(id));
+    const getMeeting = await service.getMeetingByIdSerivce(parseInt(id));
     const user = await getRegistrationUserById(parseInt(id));
     // console.log(user);
 
@@ -94,7 +89,7 @@ export const getMeetingById: RequestHandler = async (req, res, next) => {
 export const getMeetingUserId: RequestHandler = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const getMeetingUser = await getMeetingsForUser(parseInt(id));
+    const getMeetingUser = await service.getMeetingsForUser(parseInt(id));
     return res
       .status(200)
       .json({ message: "Meeting fetched successfully", data: getMeetingUser });
@@ -103,25 +98,23 @@ export const getMeetingUserId: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const approveMeetings: RequestHandler = async (req, res, next) => {
-  const meetingId = parseInt(req.params.id);
-  // req.bode.status
+export const updateMeetingStatus: RequestHandler = async (req, res, next) => {
+  const { id, action } = req.params;
   try {
-    await approveMeeting(meetingId, "approved");
-    res.send("Meeting approved successfully");
+    const updatedStatus = await service.updatedMeetingStatusService(id, action);
+    return res.status(200).json(updatedStatus);
   } catch (error) {
-    console.error("Error approving meeting:", error);
-    res.status(500).send("Error approving meeting");
+    console.error("Error status update meeting:", error);
+    res.status(500).send("Error status update meeting");
   }
 };
 
-export const rejectMeeting: RequestHandler = async (req, res, next) => {
-  const meetingId = parseInt(req.params.id);
+export const updateUserToAdmin: RequestHandler = async (req, res, next) => {
+  const { email } = req.params;
   try {
-    await approveMeeting(meetingId, "rejected"); // Mark meeting as rejected
-    res.send("Meeting rejected successfully");
+    const update = await service.updateUserToAdminService(email);
+    return res.status(200).json(update);
   } catch (error) {
-    console.error("Error rejecting meeting:", error);
-    res.status(500).send("Error rejecting meeting");
+    res.status(500).send("Error status update user to admin");
   }
 };

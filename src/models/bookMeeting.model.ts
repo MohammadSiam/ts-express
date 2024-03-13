@@ -1,5 +1,11 @@
 import { Column, Entity, PrimaryGeneratedColumn, Timestamp } from "typeorm";
 
+enum MeetingStatus {
+  PENDING = "pending",
+  APPROVED = "approved",
+  REJECTED = "rejected",
+}
+
 @Entity("bookMeeting")
 export class BookMeeting {
   @PrimaryGeneratedColumn()
@@ -29,6 +35,6 @@ export class BookMeeting {
   @Column()
   userId!: number;
 
-  @Column({ default: "pending" }) // default status is pending
-  status!: string;
+  @Column({ default: MeetingStatus.PENDING }) // default status is pending
+  status!: MeetingStatus;
 }

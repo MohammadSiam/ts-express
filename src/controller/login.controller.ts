@@ -27,6 +27,7 @@ export const loginAdmin: RequestHandler = async (req, res, next) => {
   try {
     const { email } = req.body;
     const adminUser = await adminUserService(email);
+    // console.log(adminUser);
     return res.status(200).json(adminUser);
   } catch (error) {
     console.error("Error logging in:", error);

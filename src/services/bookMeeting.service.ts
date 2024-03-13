@@ -1,5 +1,7 @@
-import { SelectQueryBuilder, getRepository } from "typeorm";
+import { FindManyOptions, SelectQueryBuilder, getRepository } from "typeorm";
 import { BookMeeting } from "../models/bookMeeting.model";
+import { Login } from "../models/login.model";
+import { Registration } from "../models/registration.model";
 
 export const bookMeeting = async (bookingData: any) => {
   const meetingRepository = getRepository(BookMeeting);
@@ -43,9 +45,10 @@ export const getAllMeetingsByRoomNumberService = async (roomNumber: any) => {
   try {
     const bookMeetingRepository = getRepository(BookMeeting);
     // console.log(roomNumber);
-    const meeting = await bookMeetingRepository.find({
-      where: { roomNumber, status: "approved" },
-    });
+    const options: FindManyOptions<BookMeeting> = {
+      where: { roomNumber, status: "approved" as any },
+    };
+    const meeting = await bookMeetingRepository.find(options);
     return meeting;
   } catch (error) {
     console.error("Error fetching meetings:", error);
@@ -71,12 +74,35 @@ export const getMeetingsForUser = async (
   return meetings;
 };
 
-export const approveMeeting = async (meetingId: number, status: string) => {
+export const updatedMeetingStatusService = async (id: any, action: any) => {
   const meetingRepository = getRepository(BookMeeting);
-  const meeting: any = await meetingRepository.findOneBy({ meetingId });
+  const meeting: any = await meetingRepository.findOneBy({ meetingId: id });
   if (!meeting) {
     throw new Error("Meeting Not Found");
   }
-  meeting.status = status;
-  await meetingRepository.save(meeting);
+  meeting.status = action === "approve" ? "approved" : "rejected";
+  const updateMeeting = await meetingRepository.save(meeting);
+  return updateMeeting;
+};
+
+export const updateUserToAdminService = async (email: any) => {
+  try {
+    const registrationRepository = getRepository(Registration);
+    const loginRepository = getRepository(Login);
+
+    const registration: any = await registrationRepository.findOneBy({ email });
+    if (registration) {
+      registration.role = "admin";
+      await registrationRepository.save(registration);
+    }
+
+    // Find login record by email and update role to 'admin'
+    const login = await loginRepository.findOne({ where: { email } });
+    if (login) {
+      login.role = "admin";
+      await loginRepository.save(login);
+    }
+  } catch (error) {
+    console.error("Error finding records:", error);
+  }
 };
