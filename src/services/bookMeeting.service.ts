@@ -15,7 +15,8 @@ export const getMeetingsAll = async () => {
 };
 
 export const getAllMeetingsByDateService = async (
-  date: string
+  date: string,
+  roomNumber: string // Adjust the type of roomNumber to match its usage
 ): Promise<BookMeeting[]> => {
   try {
     // Get the meetings repository
@@ -25,12 +26,27 @@ export const getAllMeetingsByDateService = async (
     const queryBuilder: SelectQueryBuilder<BookMeeting> =
       bookMeetingRepository.createQueryBuilder("bookMeeting");
 
-    // Find meetings where the date matches
+    // Find meetings where the date matches and roomNumber matches
     const meetings = await queryBuilder
       .where("bookMeeting.date = :date", { date })
+      .andWhere("bookMeeting.roomNumber = :roomNumber", { roomNumber }) // Add this line
       .getMany();
 
     return meetings;
+  } catch (error) {
+    console.error("Error fetching meetings:", error);
+    throw new Error("Error fetching meetings");
+  }
+};
+
+export const getAllMeetingsByRoomNumberService = async (roomNumber: any) => {
+  try {
+    const bookMeetingRepository = getRepository(BookMeeting);
+    // console.log(roomNumber);
+    const meeting = await bookMeetingRepository.find({
+      where: { roomNumber, status: "approved" },
+    });
+    return meeting;
   } catch (error) {
     console.error("Error fetching meetings:", error);
     throw new Error("Error fetching meetings");

@@ -4,6 +4,7 @@ import {
   bookMeetings,
   getAllMeetings,
   getAllMeetingsByDate,
+  getAllMeetingsByRoomNumber,
   getMeetingById,
   getMeetingUserId,
   rejectMeeting,
@@ -17,7 +18,8 @@ router.post("/booking", bookMeetings);
 router.get("/getAllMeetings", getAllMeetings);
 router.get("/getMeetingById/:id", getMeetingById);
 router.get("/getMeetingByUserId/:id", getMeetingUserId);
-router.get("/getAllMeetingsByDate/:date", getAllMeetingsByDate);
+router.get("/getAllMeetingsByDate/:date/:roomNumber", getAllMeetingsByDate);
+router.get("/getAllMeetingsByRoomNumber/:num", getAllMeetingsByRoomNumber);
 
 router.put("/:id/approve", approveMeetings);
 router.put("/:id/reject", rejectMeeting);
