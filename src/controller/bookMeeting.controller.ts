@@ -27,7 +27,7 @@ export const getAllMeetings: RequestHandler = async (req, res, next) => {
     const meetings = await Promise.all(
       allMeetings.map(async (meeting: any) => {
         const user = await getRegistrationUserById(meeting.userId);
-        // If user is null, handle the case
+        // If user is null
         if (!user) {
           return { meeting, user: null };
         }
