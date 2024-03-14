@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn, Timestamp } from "typeorm";
 
-enum MeetingStatus {
+export enum MeetingStatus {
   PENDING = "pending",
   APPROVED = "approved",
   REJECTED = "rejected",
@@ -35,6 +35,6 @@ export class BookMeeting {
   @Column()
   userId!: number;
 
-  @Column({ default: MeetingStatus.PENDING }) // default status is pending
+  @Column({ default: MeetingStatus.PENDING }) // default status is pending  enum
   status!: MeetingStatus;
 }

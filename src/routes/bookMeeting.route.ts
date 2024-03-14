@@ -19,4 +19,5 @@ router.get(
 );
 
 router.put("/:id/:action", booking.updateMeetingStatus);
+router.put("/updateAdminRole/:email", booking.updateUserToAdmin);
 export default router;

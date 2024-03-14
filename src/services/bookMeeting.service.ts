@@ -75,14 +75,27 @@ export const getMeetingsForUser = async (
 };
 
 export const updatedMeetingStatusService = async (id: any, action: any) => {
-  const meetingRepository = getRepository(BookMeeting);
-  const meeting: any = await meetingRepository.findOneBy({ meetingId: id });
-  if (!meeting) {
-    throw new Error("Meeting Not Found");
+  try {
+    const meetingRepository = getRepository(BookMeeting);
+    const meeting: any = await meetingRepository.findOneBy({ meetingId: id });
+
+    if (
+      meeting.status === null ||
+      meeting.status === undefined ||
+      meeting.status
+    ) {
+      meeting.status = action === "approve" ? "approved" : "rejected";
+    } else {
+      console.log("Meeting status already set."); // Optional: Add a log message or handle this case as needed.
+    }
+
+    const updateMeeting = await meetingRepository.save(meeting);
+
+    return updateMeeting;
+  } catch (error) {
+    console.error("Error updating meeting status:", error);
+    throw error; // Rethrow the error to be caught by the caller if needed
   }
-  meeting.status = action === "approve" ? "approved" : "rejected";
-  const updateMeeting = await meetingRepository.save(meeting);
-  return updateMeeting;
 };
 
 export const updateUserToAdminService = async (email: any) => {
@@ -97,7 +110,7 @@ export const updateUserToAdminService = async (email: any) => {
     }
 
     // Find login record by email and update role to 'admin'
-    const login = await loginRepository.findOne({ where: { email } });
+    const login = await loginRepository.findOneBy({ email });
     if (login) {
       login.role = "admin";
       await loginRepository.save(login);

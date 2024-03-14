@@ -111,6 +111,7 @@ export const updateMeetingStatus: RequestHandler = async (req, res, next) => {
 
 export const updateUserToAdmin: RequestHandler = async (req, res, next) => {
   const { email } = req.params;
+  console.log(email);
   try {
     const update = await service.updateUserToAdminService(email);
     return res.status(200).json(update);
