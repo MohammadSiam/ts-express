@@ -10,13 +10,15 @@ router.get("/getAllMeetings", booking.getAllMeetings);
 router.get("/getMeetingById/:id", booking.getMeetingById);
 router.get("/getMeetingByUserId/:id", booking.getMeetingUserId);
 router.get(
-  "/getAllMeetingsByDate/:date/:roomNumber",
-  booking.getAllMeetingsByDate
+  "/getAllMeetingsByDateRoom/:date/:roomNumber",
+  booking.getAllMeetingsByDateRoom
 );
+router.get("/getAllMeetingsByDate/:date", booking.getAllMeetingsByDate);
 router.get(
   "/getAllMeetingsByRoomNumber/:roomNumber",
-  booking.getAllMeetingsByRoomNumber
+  booking.getApprovedMeetingsByRoomNumber
 );
 
 router.put("/:id/:action", booking.updateMeetingStatus);
+router.put("/updateAdminRole/:email", booking.updateUserToAdmin);
 export default router;

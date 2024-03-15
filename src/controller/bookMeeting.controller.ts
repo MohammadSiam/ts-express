@@ -33,7 +33,7 @@ export const getAllMeetings: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const getAllMeetingsByDate: RequestHandler = async (
+export const getAllMeetingsByDateRoom: RequestHandler = async (
   req,
   res,
   next
@@ -41,7 +41,7 @@ export const getAllMeetingsByDate: RequestHandler = async (
   try {
     const { date, roomNumber } = req.params;
     // Call the service function to get meetings by date
-    const meetings = await service.getAllMeetingsByDateService(
+    const meetings = await service.getAllMeetingsByDateRoomService(
       date,
       roomNumber
     );
@@ -54,14 +54,28 @@ export const getAllMeetingsByDate: RequestHandler = async (
   }
 };
 
-export const getAllMeetingsByRoomNumber: RequestHandler = async (
+export const getAllMeetingsByDate: RequestHandler = async (req, res, next) => {
+  try {
+    const { date } = req.params;
+    const dates = await service.getAllMeetingsByDateService(date);
+    res.json(dates);
+  } catch (error) {
+    console.error("Error fetching meetings:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const getApprovedMeetingsByRoomNumber: RequestHandler = async (
   req,
   res,
   next
 ) => {
   try {
-    const { num } = req.params;
-    const roomNumbers = await service.getAllMeetingsByRoomNumberService(num);
+    const { roomNumber } = req.params;
+
+    const roomNumbers = await service.getApprovedMeetingsByRoomNumberService(
+      roomNumber
+    );
     res.json(roomNumbers);
   } catch (error) {
     console.error("Error fetching meetings:", error);

@@ -7,6 +7,7 @@ const router = express.Router();
 router.post("/register", register.registerUser);
 router.get("/findRegisterById/:id", register.findRegisterById);
 router.get("/findAllAdmin", register.getAllAdmin);
+router.get("/findSuperAdmin", register.getSuperAdmin);
 router.get("/findAdmin/:email", register.getAdmin);
 
 router.put("/updateAdminRole/:email", register.updateUserToAdmin);

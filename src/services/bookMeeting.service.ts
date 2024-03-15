@@ -16,7 +16,7 @@ export const getMeetingsAll = async () => {
   return allMeetings;
 };
 
-export const getAllMeetingsByDateService = async (
+export const getAllMeetingsByDateRoomService = async (
   date: string,
   roomNumber: string // Adjust the type of roomNumber to match its usage
 ): Promise<BookMeeting[]> => {
@@ -41,8 +41,26 @@ export const getAllMeetingsByDateService = async (
   }
 };
 
-export const getAllMeetingsByRoomNumberService = async (roomNumber: any) => {
+export const getAllMeetingsByDateService = async (date: any) => {
   try {
+    const bookMeetingRepository = getRepository(BookMeeting);
+    // console.log(roomNumber);
+    const options: FindManyOptions<BookMeeting> = {
+      where: { date },
+    };
+    const meeting = await bookMeetingRepository.find(options);
+    return meeting;
+  } catch (error) {
+    console.error("Error fetching meetings:", error);
+    throw new Error("Error fetching meetings");
+  }
+};
+
+export const getApprovedMeetingsByRoomNumberService = async (
+  roomNumber: any
+) => {
+  try {
+    console.log(roomNumber);
     const bookMeetingRepository = getRepository(BookMeeting);
     // console.log(roomNumber);
     const options: FindManyOptions<BookMeeting> = {

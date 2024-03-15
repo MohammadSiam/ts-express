@@ -94,6 +94,15 @@ export const getAllAdminService = async () => {
   }
 };
 
+export const getSuperAdminService = async () => {
+  try {
+    const loginRepository = getRepository(Login);
+    return await loginRepository.find({ where: { role: "super admin" } });
+  } catch (error) {
+    console.error("Error finding records:", error);
+  }
+};
+
 export const getAdminService = async (email: any) => {
   try {
     const loginRepository = getRepository(Login);

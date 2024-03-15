@@ -17,6 +17,19 @@ export const loginUser = async (email: string, password: string) => {
     }
     const jwtSecret: Secret = process.env.JWT_SECRET as Secret;
 
+    // Check if user has super admin role
+    if (user.role === "super admin") {
+      // Generate JWT token with admin privileges
+      const adminToken = jwt.sign(
+        { userId: user.id, userEmail: user.email, role: "super admin" },
+        jwtSecret,
+        {
+          expiresIn: "1h",
+        }
+      );
+      return adminToken;
+    }
+
     // Check if user has admin role
     if (user.role === "admin") {
       // Generate JWT token with admin privileges

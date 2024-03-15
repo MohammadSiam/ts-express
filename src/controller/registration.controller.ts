@@ -63,6 +63,16 @@ export const getAllAdmin: RequestHandler = async (req, res, next) => {
     res.status(500).send("Error status to find admin");
   }
 };
+
+export const getSuperAdmin: RequestHandler = async (req, res, next) => {
+  try {
+    const superAdmin = await serviceReg.getSuperAdminService();
+    return res.status(200).json(superAdmin);
+  } catch (error) {
+    res.status(500).send("Error status to find admin");
+  }
+};
+
 export const getAdmin: RequestHandler = async (req, res, next) => {
   const { email } = req.params;
   try {
