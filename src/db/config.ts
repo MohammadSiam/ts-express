@@ -7,7 +7,7 @@ import { Todos } from "../models/todos.model";
 const connectionOptions: ConnectionOptions = {
   type: "mysql",
   host: "localhost",
-  port: 3307,
+  port: 3306,
   username: "root",
   password: "",
   database: "login_system",
