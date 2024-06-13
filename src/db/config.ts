@@ -1,16 +1,20 @@
-import { ConnectionOptions } from "typeorm";
-import { BookMeeting } from "../models/bookMeeting.model";
-import { Login } from "../models/login.model";
-import { Registration } from "../models/registration.model";
-import { Todos } from "../models/todos.model";
+import { ConnectionOptions } from 'typeorm';
+import { config } from 'dotenv';
+import { BookMeeting } from '../models/bookMeeting.model';
+import { Login } from '../models/login.model';
+import { Registration } from '../models/registration.model';
+import { Todos } from '../models/todos.model';
+
+// Load environment variables from .env file
+config();
 
 const connectionOptions: ConnectionOptions = {
-  type: "mysql",
-  host: "mysql-18acf246-siamk417-ca09.j.aivencloud.com",
-  port: 14477,
-  username: "avnadmin",
-  password: "AVNS_EX5WddA-zAGScjrhpp2",
-  database: "defaultdb",
+  type: 'mysql',
+  host: process.env.DB_HOST,
+  port: Number(process.env.DB_PORT),
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
   entities: [Todos, Registration, Login, BookMeeting],
   synchronize: true,
   logging: false,
