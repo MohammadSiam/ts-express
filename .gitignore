@@ -2,7 +2,7 @@
 # Dependency directories
 node_modules/
 
-
+dist
 # dotenv environment variable files
 .env
 .env.development.local
