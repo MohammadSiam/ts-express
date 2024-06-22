@@ -1,5 +1,4 @@
 import { Request, RequestHandler, Response } from "express";
-import { createLogin } from "../services/login.service";
 import * as serviceReg from "../services/registration.service";
 
 export const registerUser: RequestHandler = async (
@@ -8,24 +7,16 @@ export const registerUser: RequestHandler = async (
 ) => {
   try {
     const { username, email, phone, department, password } = req.body;
-    await serviceReg.createRegistration(
+    const data: any = await serviceReg.createRegistration(
       username,
       email,
       phone,
       department,
       password
     );
-    await createLogin(email, password);
-    return res.status(200).json({ message: "User registered successfully" });
+    return res.status(200).json(data);
   } catch (error: any) {
-    console.error("Error registering user:", error);
-    if (error.message === "Username is already in use") {
-      return res.status(400).json({ message: "Username is already in use" });
-    } else if (error.message === "Email is already in use") {
-      return res.status(400).json({ message: "Email is already in use" });
-    } else {
-      return res.status(500).json({ message: "Internal Server Error" });
-    }
+    throw new Error(error.message);
   }
 };
 
@@ -57,7 +48,7 @@ export const updateUserToAdmin: RequestHandler = async (req, res, next) => {
 };
 export const getAllAdmin: RequestHandler = async (req, res, next) => {
   try {
-    const allAdmin = await serviceReg.getAllAdminService();
+    const allAdmin: any = await serviceReg.getAllAdminService();
     return res.status(200).json(allAdmin);
   } catch (error) {
     res.status(500).send("Error status to find admin");

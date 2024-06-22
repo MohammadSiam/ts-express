@@ -12,9 +12,6 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-console.log('Environment Variables:', process.env);
-
-
 const app: Application = express();
 const port = process.env.PORT || 8000;
 

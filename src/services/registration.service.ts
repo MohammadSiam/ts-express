@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import { getRepository } from "typeorm";
 import { Login } from "../models/login.model";
 import { Registration } from "../models/registration.model";
+import { createLogin } from "./login.service";
 
 export const createRegistration = async (
   username: string,
@@ -17,19 +18,15 @@ export const createRegistration = async (
     const existingEmail = await registrationRepository.findOne({
       where: { email },
     });
+    if (existingEmail) return { message: "This email already exists" };
 
     const existingPhone = await registrationRepository.findOne({
       where: { phone },
     });
 
     if (existingPhone) {
-      throw new Error("PhoneNumber is already in use");
+      return { message: "Phone already exists" };
     }
-
-    if (existingEmail) {
-      throw new Error("Email is already in use");
-    }
-
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -41,18 +38,26 @@ export const createRegistration = async (
       department,
       password: hashedPassword,
     });
-    await registrationRepository.save(newRegistration);
+    if (newRegistration) {
+      await createLogin(email, password);
+    }
+    const info: any = await registrationRepository.save(newRegistration);
+    return info;
   } catch (error) {
     throw error;
   }
 };
 
 export const getRegistrationUserById = async (id: number) => {
+  try {
+  } catch (error) {
+    throw error;
+  }
   const regRepository = getRepository(Registration);
-  // console.log(id);
-  const reg = await regRepository.findOneBy({ registrationId: id });
-  // console.log(reg);
-  return reg;
+
+  const info = await regRepository.findOneBy({ registrationId: id });
+
+  return info;
 };
 
 export const getNameRegistrationUser = async (id: number) => {
@@ -88,7 +93,9 @@ export const updateUserToAdminService = async (email: any) => {
 export const getAllAdminService = async () => {
   try {
     const loginRepository = getRepository(Login);
-    return await loginRepository.find({ where: { role: "admin" } });
+    const info: any = await loginRepository.find({ where: { role: "admin" } });
+    // if (!info) return { message: "No admin found" };
+    return info;
   } catch (error) {
     console.error("Error finding records:", error);
   }
