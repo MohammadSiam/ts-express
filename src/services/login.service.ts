@@ -100,3 +100,26 @@ export const adminUserService = async (email: string) => {
     throw error;
   }
 };
+
+export const getAllUserService = async () => {
+  try {
+    const loginRepository = getRepository(Login);
+    const allUsers = await loginRepository.find({ relations: ["meetings"] });
+    return allUsers;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getUserByUserId = async (userId: number) => {
+  try {
+    const loginRepository = getRepository(Login);
+    const user = await loginRepository.find({
+      where: { id: userId },
+      relations: ["meetings"],
+    });
+    return user;
+  } catch (error) {
+    throw error;
+  }
+};

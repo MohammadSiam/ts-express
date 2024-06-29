@@ -13,6 +13,10 @@ router.get(
   "/getAllMeetingsByDateRoom/:date/:roomNumber",
   booking.getAllMeetingsByDateRoom
 );
+router.get(
+  "/getAllMeetingsByDateRoom/:date/:roomNumber/:status",
+  booking.getAllMeetingsByDateRoomAndStatus
+);
 router.get("/getAllMeetingsByDate/:date", booking.getAllMeetingsByDate);
 router.get(
   "/getAllMeetingsByRoomNumber/:roomNumber",

@@ -54,6 +54,24 @@ export const getAllMeetingsByDateRoom: RequestHandler = async (
   }
 };
 
+export const getAllMeetingsByDateRoomAndStatus: RequestHandler = async (
+  req,
+  res
+) => {
+  try {
+    const { date, roomNumber, status } = req.params;
+    const meetings = await service.getAllMeetingsByDateRoomAndStatusService(
+      date,
+      +roomNumber,
+      status
+    );
+    res.json(meetings);
+  } catch (error) {
+    console.error("Error fetching meetings:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 export const getAllMeetingsByDate: RequestHandler = async (req, res, next) => {
   try {
     const { date } = req.params;

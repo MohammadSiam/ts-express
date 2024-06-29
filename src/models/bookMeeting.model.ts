@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn, Timestamp } from "typeorm";
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Timestamp,
+} from "typeorm";
+import { Login } from "./login.model";
 
 export enum MeetingStatus {
   PENDING = "pending",
@@ -37,4 +44,7 @@ export class BookMeeting {
 
   @Column({ default: MeetingStatus.PENDING }) // default status is pending  enum
   status!: MeetingStatus;
+
+  @ManyToOne(() => Login, (user) => user.meetings)
+  userInfo!: Login;
 }

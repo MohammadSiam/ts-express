@@ -1,18 +1,36 @@
 import { FindManyOptions, SelectQueryBuilder, getRepository } from "typeorm";
+import { CreateBookMeetingDto } from "../dtos/createBookMeeting.dto";
 import { BookMeeting } from "../models/bookMeeting.model";
 import { Login } from "../models/login.model";
 import { Registration } from "../models/registration.model";
 
-export const bookMeeting = async (bookingData: any) => {
+export const bookMeeting = async (
+  createBookMeetingDto: CreateBookMeetingDto
+) => {
   const meetingRepository = getRepository(BookMeeting);
-  const newMeeting = meetingRepository.create(bookingData);
+
+  const loginRepository = getRepository(Login);
+  const userId = createBookMeetingDto.userInfoId;
+  const loginInfo: any = await loginRepository.findOne({
+    where: { id: userId },
+    relations: ["meetings"],
+  });
+  if (!loginInfo) return { message: "No user Info Found" };
+
+  const newMeeting = meetingRepository.create(createBookMeetingDto);
   const savedMeeting = await meetingRepository.save(newMeeting);
+
+  loginInfo.meetings = [...loginInfo.meetings, newMeeting];
+  await loginRepository.save(loginInfo);
+
   return savedMeeting;
 };
 
 export const getMeetingsAll = async () => {
   const meetingsRepository = getRepository(BookMeeting);
-  const allMeetings = await meetingsRepository.find();
+  const allMeetings = await meetingsRepository.find({
+    relations: ["userInfo"],
+  });
   return allMeetings;
 };
 
@@ -35,6 +53,27 @@ export const getAllMeetingsByDateRoomService = async (
       .getMany();
 
     return meetings;
+  } catch (error) {
+    console.error("Error fetching meetings:", error);
+    throw new Error("Error fetching meetings");
+  }
+};
+
+export const getAllMeetingsByDateRoomAndStatusService = async (
+  date: string,
+  roomNumber: number,
+  status: string
+): Promise<BookMeeting[]> => {
+  try {
+    const meetingRepository = getRepository(BookMeeting);
+    const info: any = await meetingRepository
+      .createQueryBuilder("meeting")
+      .select(["meeting.*"])
+      .where("meeting.date=:date", { date })
+      .andWhere("meeting.roomNumber=:roomNumber", { roomNumber })
+      .andWhere("meeting.status=:status", { status })
+      .getRawMany();
+    return info;
   } catch (error) {
     console.error("Error fetching meetings:", error);
     throw new Error("Error fetching meetings");
