@@ -1,5 +1,10 @@
 import { Request, RequestHandler, Response } from "express";
+import multer from "multer";
+import { CreateRegistrationDto } from "../dtos/createRegistration.dto";
 import * as serviceReg from "../services/registration.service";
+
+// Configure multer for file uploads
+const upload = multer({ dest: "uploads/" });
 
 export const registerUser: RequestHandler = async (
   req: Request,
@@ -7,13 +12,18 @@ export const registerUser: RequestHandler = async (
 ) => {
   try {
     const { username, email, phone, department, password } = req.body;
-    const data: any = await serviceReg.createRegistration(
+    const imagePath: any = req.file?.path;
+
+    const registrationData: CreateRegistrationDto = {
       username,
       email,
       phone,
       department,
-      password
-    );
+      password,
+      imagePath,
+    };
+
+    const data: any = await serviceReg.createRegistration(registrationData);
     return res.status(200).json(data);
   } catch (error: any) {
     throw new Error(error.message);

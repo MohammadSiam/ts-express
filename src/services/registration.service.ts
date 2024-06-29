@@ -1,45 +1,40 @@
 import bcrypt from "bcrypt";
 import { getRepository } from "typeorm";
+import { CreateRegistrationDto } from "../dtos/createRegistration.dto";
 import { Login } from "../models/login.model";
 import { Registration } from "../models/registration.model";
 import { createLogin } from "./login.service";
 
 export const createRegistration = async (
-  username: string,
-  email: string,
-  phone: string,
-  department: string,
-  password: string
+  createRegistration: CreateRegistrationDto
 ) => {
   try {
     // Check if username or email already exists
     const registrationRepository = getRepository(Registration);
 
     const existingEmail = await registrationRepository.findOne({
-      where: { email },
+      where: { email: createRegistration.email },
     });
     if (existingEmail) return { message: "This email already exists" };
 
     const existingPhone = await registrationRepository.findOne({
-      where: { phone },
+      where: { phone: createRegistration.phone },
     });
 
     if (existingPhone) {
       return { message: "Phone already exists" };
     }
+    const password: any = createRegistration.password;
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create and save the new registration
     const newRegistration = registrationRepository.create({
-      username,
-      email,
-      phone,
-      department,
+      ...createRegistration,
       password: hashedPassword,
     });
     if (newRegistration) {
-      await createLogin(email, password);
+      await createLogin(createRegistration.email, password);
     }
     const info: any = await registrationRepository.save(newRegistration);
     return info;
