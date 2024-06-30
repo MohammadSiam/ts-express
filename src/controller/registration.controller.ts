@@ -1,32 +1,47 @@
 import { Request, RequestHandler, Response } from "express";
-import multer from "multer";
 import { CreateRegistrationDto } from "../dtos/createRegistration.dto";
 import * as serviceReg from "../services/registration.service";
+import { plainToInstance } from "class-transformer";
+import cloudinary from "../config/cloudinary.config";
+import { toDataUri } from "../utils/dataUriParser";
 
-// Configure multer for file uploads
-const upload = multer({ dest: "uploads/" });
 
 export const registerUser: RequestHandler = async (
   req: Request,
   res: Response
 ) => {
   try {
-    const { username, email, phone, department, password } = req.body;
-    const imagePath: any = req.file?.path;
+    const createRegistrationDto = plainToInstance(CreateRegistrationDto, JSON.parse(req.body.data));
 
-    const registrationData: CreateRegistrationDto = {
-      username,
-      email,
-      phone,
-      department,
-      password,
-      imagePath,
+    const file: any = req.file;
+    const dataUri: any = toDataUri(file);
+
+    const uploadToCloudinary = (dataUri: string) => {
+      return new Promise((resolve, reject) => {
+        cloudinary.uploader.upload(dataUri, (error, result) => {
+          if (error) {
+            return reject(error);
+          }
+          resolve(result);
+        });
+
+      });
     };
 
-    const data: any = await serviceReg.createRegistration(registrationData);
+    const result: any = await uploadToCloudinary(dataUri);
+    const { public_id } = result;
+    const url = cloudinary.url(public_id, {
+      width: 200,
+      height: 200,
+      crop: 'fill'
+    });
+
+    createRegistrationDto.imagePath = url;
+
+    const data = await serviceReg.createRegistration(createRegistrationDto);
     return res.status(200).json(data);
   } catch (error: any) {
-    throw new Error(error.message);
+    return res.status(500).json({ success: false, error: error.message });
   }
 };
 

@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString, Matches } from "class-validator";
+import { IsEmail, IsEmpty, IsNotEmpty, IsString, Matches } from "class-validator";
 
 export class CreateRegistrationDto {
   @IsString()
@@ -10,7 +10,6 @@ export class CreateRegistrationDto {
 
   @IsString()
   @IsNotEmpty()
-  @Matches(/^[0-9]{10}$/, { message: "Phone number must be 10 digits" })
   phone!: string;
 
   @IsString()
@@ -21,7 +20,6 @@ export class CreateRegistrationDto {
   @IsNotEmpty()
   password!: string;
 
-  @IsString()
-  @IsNotEmpty()
-  imagePath!: string;
+  @IsEmpty()
+  imagePath?: string;
 }

@@ -22,4 +22,7 @@ export class Registration {
 
   @Column({ type: "varchar", nullable: false, default: "user" })
   role!: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  imagePath?: string;
 }
